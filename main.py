@@ -79,20 +79,27 @@ def create_pairs(item_list):
 	return co_occurence
 
 def save_pairs(pairs_dict):
+	#Exports the co-occurences dictionary as a json
 	with open('data.json', 'w') as fp:
 		json.dump(pairs_dict, fp)
 
 def load_pairs(filepath):
+	#Imports the co-occurences json as a dictionary
 	with open(filepath) as json_file:
 		co_occurence = json.load(json_file)
 	return co_occurence
 
 def create_edges(pairs_dict):
+	#Converts the co-occurnces into an edge graph
 	G = nx.Graph()
 	
 	counta = 0
 	countb = 0
 	
+	#Pairs are added into the graph using their count as the weight for edges
+	#For loop currently excluded the lowest co-occurences as it's impractical
+	#to graph everything and makes the process extremely ram heavy,
+	#depending on the actual number of pairs
 	for pair, count in pairs_dict.items():
 		if count < 5:
 			counta += 1
@@ -105,6 +112,7 @@ def create_edges(pairs_dict):
 	return G
 
 def draw_network(pairs_dict):
+	#Runs create_edges() and draws the returned graph network
 	G = create_edges(pairs_dict)
 	plt.figure(figsize=(20,20))
 	
@@ -114,6 +122,7 @@ def draw_network(pairs_dict):
 	nx.draw_networkx_nodes(G, pos)
 	print("drawing edges")
 	#nx.draw_networkx_edges(G, pos, width=[d['weight'] for (u,v,d) in G.edges(data=True)])
+	#Currently removed edges being weighted by count as it makes cluttered graphs even more unreadable
 	nx.draw_networkx_edges(G, pos, width=5)
 	
 	edge_labels = {(u, v): d['weight'] for (u,v,d) in G.edges(data=True)}
